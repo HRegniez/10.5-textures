@@ -1,15 +1,47 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
-// Textures
-const image = new Image()
+// // // This process is what TextureLoader does (line 17)
+// /** Textures
+// const image = new Image()
+// const texture = new THREE.Texture(image)
+// texture.colorSpace = THREE.SRGBColorSpace
 
-image.onload = () => 
-{
-    console.log('image loaded !')
+// image.onload = () => 
+// {
+//     texture.needsUpdate = true
+// }
+
+// image.src = '/textures/door/color.jpg' */
+
+// Texture Loader
+const loadingManager = new THREE.LoadingManager()
+loadingManager.onStart = () => {
+    console.log('start')
 }
-
-image.src = '/textures/door/color.jpg'
+loadingManager.onLoad = () => {
+    console.log('loaded')
+}
+loadingManager.onProgress = () => {
+    console.log('progress')
+}
+loadingManager.onError = () => {
+    console.log('error')
+}
+const textureLoader = new THREE.TextureLoader(loadingManager) // one texturLoader can load many textures
+const colorTexture = textureLoader.load(
+    '/textures/door/color.jpg',
+    // () => {   // List of callbacks for error handling
+    //     console.log('load')
+    // },
+    // () => {
+    //     console.log('progres')
+    // },
+    // () => {
+    //     console.log('erros')
+    // }
+)
+colorTexture.colorSpace = THREE.SRGBColorSpace 
 
 
 /**
@@ -25,7 +57,7 @@ const scene = new THREE.Scene()
  * Object
  */
 const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
+const material = new THREE.MeshBasicMaterial({ map: colorTexture})
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
 
